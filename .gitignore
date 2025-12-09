@@ -22,6 +22,8 @@ tickets/
 
 # Logs
 *.log
+.pytest_cache/
+.coverage
 
 # IDE / OS
 .vscode/

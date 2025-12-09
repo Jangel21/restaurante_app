@@ -1,13 +1,9 @@
-restaurant_pos/
-│
-├── app.py                 # Aplicación principal Flask
-├── models.py              # Modelos de base de datos
-├── database.py            # Configuración de DB
-├── routes/
-│   ├── menu.py           # Rutas del menú
-│   ├── orders.py         # Rutas de pedidos
-│   └── reports.py        # Rutas de reportes
+restaurante_app/
+├── app.py                      # Aplicación principal Flask (rutas y lógica)
+├── models.py                   # Modelos de base de datos (SQLAlchemy)
+├── database.py                 # Inicialización de la DB + datos de ejemplo
 ├── utils/
-│   └── ticket_generator.py  # Generador de tickets PDF
-├── requirements.txt       # Dependencias
-└── static/               # Archivos estáticos
+│   └── ticket_generator.py     # Generador de tickets en PDF
+├── requirements.txt            # Dependencias del proyecto
+├── LICENSE
+└── README.md
