@@ -61,6 +61,47 @@ class TicketGenerator:
         y -= 4 * mm
         c.drawString(5 * mm, y, f"Cliente: {order_data['customer_name']}")
         y -= 4 * mm
+        
+        # Tipo de orden
+        order_type_labels = {
+            "local": "Local",
+            "takeout": "Para llevar",
+            "delivery": "A domicilio"
+        }
+        order_type_text = order_type_labels.get(order_data.get('order_type', 'local'), 'Local')
+        c.setFont("Helvetica-Bold", 8)
+        c.drawString(5 * mm, y, f"Tipo: {order_type_text}")
+        y -= 4 * mm
+        
+        # Si es delivery, mostrar info adicional
+        if order_data.get('order_type') == 'delivery':
+            c.setFont("Helvetica", 7)
+            if order_data.get('delivery_phone'):
+                c.drawString(5 * mm, y, f"Tel: {order_data['delivery_phone']}")
+                y -= 3.5 * mm
+            if order_data.get('delivery_address'):
+                # Dividir dirección si es muy larga
+                address = order_data['delivery_address']
+                if len(address) > 35:
+                    words = address.split()
+                    line1 = ""
+                    line2 = ""
+                    for word in words:
+                        if len(line1 + word) < 35:
+                            line1 += word + " "
+                        else:
+                            line2 += word + " "
+                    c.drawString(5 * mm, y, f"Dir: {line1.strip()}")
+                    y -= 3.5 * mm
+                    if line2:
+                        c.drawString(10 * mm, y, line2.strip())
+                        y -= 3.5 * mm
+                else:
+                    c.drawString(5 * mm, y, f"Dir: {address}")
+                    y -= 3.5 * mm
+            y -= 1 * mm
+        
+        c.setFont("Helvetica", 8)
         c.drawString(
             5 * mm,
             y,
@@ -95,9 +136,16 @@ class TicketGenerator:
             # Precio unitario
             c.setFont("Helvetica", 7)
             c.drawString(15 * mm, y, f"${item['price']:.2f} c/u")
-            y -= 5 * mm
+            y -= 4 * mm
+            
+            # Notas si existen
+            if item.get('notes'):
+                c.setFont("Helvetica-Oblique", 7)
+                notes_text = f"Nota: {item['notes'][:30]}"
+                c.drawString(15 * mm, y, notes_text)
+                y -= 4 * mm
+            
             c.setFont("Helvetica", 8)
-
             y -= 2 * mm
 
         # Línea separadora
@@ -117,6 +165,17 @@ class TicketGenerator:
         c.setFont("Helvetica-Bold", 10)
         c.drawString(5 * mm, y, "TOTAL:")
         c.drawRightString(self.width - 5 * mm, y, f"${order_data['total']:.2f}")
+        y -= 6 * mm
+
+        # Método de pago
+        payment_labels = {
+            "cash": "Efectivo",
+            "card": "Tarjeta",
+            "transfer": "Transferencia"
+        }
+        payment_text = payment_labels.get(order_data.get('payment_method', 'cash'), 'Efectivo')
+        c.setFont("Helvetica", 8)
+        c.drawString(5 * mm, y, f"Pago: {payment_text}")
         y -= 8 * mm
 
         # Línea separadora
@@ -142,13 +201,17 @@ if __name__ == "__main__":
     test_order = {
         "ticket_number": 1,
         "customer_name": "Juan Pérez",
+        "order_type": "delivery",
+        "delivery_phone": "33-1234-5678",
+        "delivery_address": "Calle Morelos #123, Col. Centro, Guadalajara, Jalisco",
         "items": [
-            {"name": "Tacos al Pastor", "quantity": 3, "price": 45.00},
-            {"name": "Agua de Horchata", "quantity": 2, "price": 25.00},
+            {"name": "Tacos al Pastor", "quantity": 3, "price": 45.00, "notes": "Sin cebolla"},
+            {"name": "Agua de Horchata", "quantity": 2, "price": 25.00, "notes": None},
         ],
-        "subtotal": 125.00,
-        "iva": 20.00,
-        "total": 145.00,
+        "subtotal": 185.00,
+        "iva": 29.60,
+        "total": 214.60,
+        "payment_method": "cash",
     }
 
     path = generator.generate_ticket(test_order)

@@ -13,7 +13,23 @@ report_bp = Blueprint("report_bp", __name__)
 @report_bp.route("/daily", methods=["GET"])
 @role_required("admin")
 def get_daily_report():
-    """Obtiene el reporte de ventas del día."""
+    """
+    Obtiene el reporte de ventas del día.
+    ---
+    tags:
+      - reports
+    parameters:
+      - in: query
+        name: date
+        type: string
+        required: false
+        description: Fecha en formato YYYY-MM-DD
+    security:
+      - BearerAuth: []
+    responses:
+      200:
+        description: Totales del día
+    """
     target_date_str = request.args.get("date")
     if target_date_str:
         target_date = datetime.strptime(target_date_str, "%Y-%m-%d").date()
@@ -40,7 +56,23 @@ def get_daily_report():
 @report_bp.route("/best-sellers", methods=["GET"])
 @role_required("admin")
 def get_best_sellers():
-    """Obtiene los productos más vendidos en los últimos N días (default 7)."""
+    """
+    Obtiene los productos más vendidos en los últimos N días (default 7).
+    ---
+    tags:
+      - reports
+    parameters:
+      - in: query
+        name: days
+        type: integer
+        required: false
+        default: 7
+    security:
+      - BearerAuth: []
+    responses:
+      200:
+        description: Productos más vendidos
+    """
     days = request.args.get("days", 7, type=int)
     start_date = datetime.now() - timedelta(days=days)
 
@@ -76,7 +108,23 @@ def get_best_sellers():
 @report_bp.route("/sales-by-category", methods=["GET"])
 @role_required("admin")
 def get_sales_by_category():
-    """Obtiene ventas agrupadas por categoría en los últimos N días (default 7)."""
+    """
+    Obtiene ventas agrupadas por categoría en los últimos N días (default 7).
+    ---
+    tags:
+      - reports
+    parameters:
+      - in: query
+        name: days
+        type: integer
+        required: false
+        default: 7
+    security:
+      - BearerAuth: []
+    responses:
+      200:
+        description: Ventas por categoría
+    """
     days = request.args.get("days", 7, type=int)
     start_date = datetime.now() - timedelta(days=days)
 

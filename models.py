@@ -41,15 +41,26 @@ class Order(db.Model):
     ticket_number = db.Column(db.Integer, unique=True, nullable=False)
     customer_name = db.Column(db.String(100), default="Cliente General")
 
-    subtotal = db.Column(db.Float, nullable=False)
-    iva = db.Column(db.Float, nullable=False)
-    total = db.Column(db.Float, nullable=False)
+    # Nuevos campos para tipo de orden
+    order_type = db.Column(db.String(20), default="local")  # local|takeout|delivery
+    delivery_phone = db.Column(db.String(20))
+    delivery_address = db.Column(db.Text)
 
-    status = db.Column(db.String(20), default="completed")  # pending|completed|cancelled
+    subtotal = db.Column(db.Float, nullable=False, default=0.0)
+    iva = db.Column(db.Float, nullable=False, default=0.0)
+    total = db.Column(db.Float, nullable=False, default=0.0)
+
+    # Cambio: ahora status puede ser 'open' (ticket abierto)
+    status = db.Column(db.String(20), default="open")  # open|completed|cancelled
     payment_method = db.Column(db.String(20), default="cash")  # cash|card|transfer
     printed = db.Column(db.Boolean, default=False)
 
+    # Usuario que creó la orden (mesero/cajero)
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_by = db.relationship("User", backref="orders_created")
+
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    completed_at = db.Column(db.DateTime)
 
     # Relación con items de la orden
     items = db.relationship(
@@ -64,13 +75,18 @@ class Order(db.Model):
             "id": self.id,
             "ticket_number": self.ticket_number,
             "customer_name": self.customer_name,
+            "order_type": self.order_type,
+            "delivery_phone": self.delivery_phone,
+            "delivery_address": self.delivery_address,
             "subtotal": float(self.subtotal),
             "iva": float(self.iva),
             "total": float(self.total),
             "status": self.status,
             "payment_method": self.payment_method,
             "printed": self.printed,
+            "created_by": self.created_by.to_dict() if self.created_by else None,
             "created_at": self.created_at.isoformat(),
+            "completed_at": self.completed_at.isoformat() if self.completed_at else None,
             "items": [item.to_dict() for item in self.items],
         }
 
@@ -138,7 +154,10 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    role = db.Column(db.String(20), default="cashier")  # admin|cashier
+    full_name = db.Column(db.String(120))
+    # Roles: admin (caja/gerente), cashier (cajero), waiter (mesero)
+    role = db.Column(db.String(20), default="waiter")
+    active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def set_password(self, password: str) -> None:
@@ -148,4 +167,10 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
     def to_dict(self):
-        return {"id": self.id, "username": self.username, "role": self.role}
+        return {
+            "id": self.id,
+            "username": self.username,
+            "full_name": self.full_name,
+            "role": self.role,
+            "active": self.active,
+        }

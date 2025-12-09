@@ -8,7 +8,46 @@ auth_bp = Blueprint("auth_bp", __name__)
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
-    """Autenticación básica con JWT."""
+    """
+    Autenticación básica con JWT.
+    ---
+    tags:
+      - auth
+    consumes:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          required: [username, password]
+          properties:
+            username:
+              type: string
+              example: admin
+            password:
+              type: string
+              example: admin123
+    responses:
+      200:
+        description: Token generado
+        schema:
+          type: object
+          properties:
+            access_token:
+              type: string
+            user:
+              type: object
+              properties:
+                id:
+                  type: integer
+                username:
+                  type: string
+                role:
+                  type: string
+      401:
+        description: Credenciales inválidas
+    """
     data = request.get_json() or {}
     username = data.get("username")
     password = data.get("password")

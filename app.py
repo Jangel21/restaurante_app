@@ -14,7 +14,6 @@ from errors import register_error_handlers
 
 migrate = Migrate()
 jwt = JWTManager()
-swagger = Swagger()
 
 
 def create_app(config_name: str | None = None) -> Flask:
@@ -62,15 +61,24 @@ def create_app(config_name: str | None = None) -> Flask:
     # Crear tablas y seeds iniciales
     init_db(app)
 
-    swagger.init_app(
+    Swagger(
         app,
         template={
             "swagger": "2.0",
             "info": {
-                "title": "API POS - La Cantina Mexicana",
+                "title": "API POS - Las Tres Marias",
                 "description": "Documentación de la API",
                 "version": "1.0.0",
             },
+            "securityDefinitions": {
+                "BearerAuth": {
+                    "type": "apiKey",
+                    "name": "Authorization",
+                    "in": "header",
+                    "description": "JWT Bearer token. Ejemplo: 'Bearer <token>'",
+                }
+            },
+            "security": [{"BearerAuth": []}],
         },
     )
 
@@ -78,7 +86,7 @@ def create_app(config_name: str | None = None) -> Flask:
     def index():
         return jsonify(
             {
-                "message": "API del Sistema POS - La Cantina Mexicana",
+                "message": "API del Sistema POS - Las Tres Marias",
                 "version": "1.0",
                 "endpoints": {
                     "menu": "/api/menu",
