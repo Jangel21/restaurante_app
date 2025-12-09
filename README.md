@@ -1,5 +1,4 @@
-# Restaurante POS API – La Cantina Mexicana
-
+# Restaurante POS API – Las Tres Marias
 Backend en Flask para gestionar menú, órdenes, reportes y tickets PDF, ahora con JWT, roles y blueprints.
 
 ## Arquitectura rápida
