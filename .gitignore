@@ -1,0 +1,30 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment/config
+.env
+.env.*
+
+# Databases
+instance/
+*.db
+*.sqlite3
+
+# Reports / generated files
+tickets/
+*.pdf
+
+# Logs
+*.log
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

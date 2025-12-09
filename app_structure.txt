@@ -1,0 +1,13 @@
+restaurant_pos/
+│
+├── app.py                 # Aplicación principal Flask
+├── models.py              # Modelos de base de datos
+├── database.py            # Configuración de DB
+├── routes/
+│   ├── menu.py           # Rutas del menú
+│   ├── orders.py         # Rutas de pedidos
+│   └── reports.py        # Rutas de reportes
+├── utils/
+│   └── ticket_generator.py  # Generador de tickets PDF
+├── requirements.txt       # Dependencias
+└── static/               # Archivos estáticos
