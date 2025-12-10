@@ -12,7 +12,6 @@ def init_db(app):
     """
     from models import MenuItem, User  # Import local para evitar import circular
 
-    # db.init_app(app)  # Se inicializa en create_app; evitar doble registro
     with app.app_context():
         db.create_all()
 
